@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {randomNumBetweenExcluding} from './helperFunctions';
+import Enemy from './Enemies';
+
 
 const KEY = {
     LEFT: 37,
@@ -150,7 +152,25 @@ class MainGame extends Component {
                     y: randomNumBetweenExcluding(0, this.state.screen.height, ship.position.y - 60, ship.position.y + 60)
                 },
                 create: this.createObject.bind(this),
-                addScoreAndCoins: this.addScoreAndCoins.bind(this)
+                addScoreAndCoins: this.addScoreAndCoins.bind(this),
+                type: function(){
+                    var min = 0;
+                    var max = 10;
+                    var chance = Math.floor(Math.random() * (max - min)) + min;
+                    if(this.state.currentScore >= 500 && chance <= 2){
+                        return 'Queen'
+                    }
+                    if(this.state.currentScore >= 350 && chance <= 3){
+                        return 'Knight'
+                    }
+                    if(this.state.currentScore >= 200 && chance <= 4){
+                        return 'Bishop'
+                    }
+                    if(this.state.currentScore >= 50 && chance <= 5){
+                        return 'Rook'
+                    }
+                    return 'Pawn'
+                }
             })
             this.createObject(enemy, 'enemy')
         }
@@ -191,10 +211,7 @@ class MainGame extends Component {
                     if(ships){
                         obj1.destroy()
                     } else if(bullets){
-                        obj2.damage()
-                        if(obj2.health <= 0){
-                            obj2.destroy()
-                        }
+                        obj2.destroy()
                     }
                 }
                 --b
