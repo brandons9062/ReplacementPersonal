@@ -73,6 +73,7 @@ class MainGame extends Component {
         this.setState({context: context});
         
         this.startGame();
+        console.log(this.enemies)
         requestAnimationFrame(() => {this.update()});
     }
     
@@ -94,8 +95,15 @@ class MainGame extends Component {
         context.globalAlpha = 0.4;
         context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
         context.globalAlpha = 1;
-        
-        if(!this.enemies.length){
+//        
+        this.updateObjects(this.particles, 'particles');
+        this.updateObjects(this.ship, 'ship');
+        this.updateObjects(this.bullets, 'bullets');
+        this.updateObjects(this.enemies, 'enemies');
+//                console.log("this.enemies.length:   ", this.enemies.length);
+
+        if(this.enemies.length < 1){
+            console.log("HIT");
             let count = this.state.enemyCount + 1;
             this.setState({enemyCount: count});
             this.sendEnemies(count);
@@ -104,10 +112,7 @@ class MainGame extends Component {
         this.collisionCheckWith(this.ship, this.enemies);
         this.collisionCheckWith(this.bullets, this.enemies);
         
-        this.updateObjects(this.particles, 'particles');
-        this.updateObjects(this.ship, 'ship');
-        this.updateObjects(this.bullets, 'bullets');
-        this.updateObjects(this.enemies, 'enemies');
+
         
         context.restore();
         
@@ -198,6 +203,7 @@ class MainGame extends Component {
         let index = 0
         for(var obj of objects){
             if(obj.delete){
+                console.log(this[type])
                 this[type].splice(index, 1)
             } else {
                 objects[index].render(this.state)

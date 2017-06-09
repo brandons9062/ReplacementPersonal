@@ -45,7 +45,7 @@ class Enemy {
         
         this.delete = true;
         
-//        if(this.type !== "Pawn"){
+        if(this.radius > 20){
             let enemy = new Enemy({
                 position: this.position,
                 size: this.radius - 20,
@@ -55,7 +55,7 @@ class Enemy {
             })
             this.create(enemy, 'enemies');
         
-//        }
+        } 
         
     }
     render(state){
