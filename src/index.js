@@ -4,8 +4,7 @@ import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import promise from 'redux-promise';
-import registerServiceWorker from './registerServiceWorker';
-import './index.css';
+import style from './index.css';
 
 import reducers from './reducers';
 import NavBar from './NavBar';
@@ -27,4 +26,3 @@ ReactDOM.render(
         </BrowserRouter>
     </Provider>
     , document.getElementById('root'));
-registerServiceWorker();

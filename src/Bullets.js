@@ -1,4 +1,4 @@
-import {rotatePoint} from './helperFunction';
+import {rotatePoint} from './helperFunctions';
 
 class Bullet {
     constructor(args) {
@@ -33,7 +33,7 @@ class Bullet {
         context.translate(this.position.x, this.position.y)
         context.rotate(this.rotation * Math.PI/180)
         context.fillStyle = '#FFFFFF'
-        context.lineWidth = 0,5;
+        context.lineWidth = 0.5;
         context.beginPath()
         context.arc(0, 0, 2, 0, 2 * Math.PI)
         context.closePath()
@@ -41,3 +41,5 @@ class Bullet {
         context.restore()
     }
 }
+
+export default Bullet;

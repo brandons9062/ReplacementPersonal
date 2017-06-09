@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {randomNumBetweenExcluding} from './helperFunctions';
+import Ship from './Ships';
 import Enemy from './Enemies';
+import {randomNumBetweenExcluding} from './helperFunctions';
 
 
 const KEY = {
@@ -38,7 +39,6 @@ class MainGame extends Component {
         this.ship = [];
         this.enemies = [];
         this.bullets = [];
-        this.dust = [];
     }
     
     handleKeys(value, e){
@@ -85,6 +85,10 @@ class MainGame extends Component {
         const ship = this.ship[0]
         context.save()
         context.scale(this.state.screen.ratio, this.state.screen.ratio)
+        context.fillStyle = '#000';
+        context.globalAlpha = 0.4;
+        context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
+        context.globalAlpha = 1;
         
         if(this.enemies.length < 1){
             let count = this.state.enemyCount + 1;
@@ -172,7 +176,7 @@ class MainGame extends Component {
                     return 'Pawn'
                 }
             })
-            this.createObject(enemy, 'enemy')
+            this.createObject(enemy, 'enemies')
         }
     }
     
@@ -195,9 +199,9 @@ class MainGame extends Component {
     collisionCheckWith(objects1, objects2){
         let ships;
         let bullets;
-        if(objects1 == this.ship){
+        if(objects1 === this.ship){
             ships = true;
-        } else if(objects1 == this.bullets){
+        } else if(objects1 === this.bullets){
             bullets = true;
         }
         let a = objects1.length - 1
@@ -243,10 +247,10 @@ class MainGame extends Component {
         if(!this.state.inGame){
             gameover = (
                 <div>
-                    <h2>Game Over!</h2>
-                    <h5>{scoremessage}</h5>
-                    <h5>{coinsmessage}</h5>
-                    <button className="btn btn-primary" onClick={this.startGame.bind(this)}>
+                    <p>Game Over!</p>
+                    <p>{scoremessage}</p>
+                    <p>{coinsmessage}</p>
+                    <button onClick={this.startGame.bind(this)}>
                         Retry?
                     </button>
                 </div>
@@ -257,8 +261,8 @@ class MainGame extends Component {
         return (
             <div>
                 {gameover}
-                <div>Score: {this.state.currentScore}</div>
-                <div>Coins Earned: {this.state.coinsEarned}</div>
+                <div className="score current-score">Score: {this.state.currentScore}</div>
+                <div className="score top-score">Coins Earned: {this.state.coinsEarned}</div>
                 <canvas ref="canvas" width={this.state.screen.width * this.state.screen.ratio} height={this.state.screen.height * this.state.screen.ratio} />
             </div>
         );
