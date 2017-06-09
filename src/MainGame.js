@@ -19,7 +19,7 @@ class MainGame extends Component {
             screen: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                ration: window.devicePixelRation || 1,
+                ratio: window.devicePixelRatio || 1,
             },
             context: null,
             keys: {
@@ -29,7 +29,7 @@ class MainGame extends Component {
                 down: 0,
                 space: 0
             },
-            enemyCount: 1,
+            enemyCount: 3,
             currentScore: 0,
 //            topScore:,
             inGame: false,
@@ -39,6 +39,7 @@ class MainGame extends Component {
         this.ship = [];
         this.enemies = [];
         this.bullets = [];
+        this.particles = [];
     }
     
     handleKeys(value, e){
@@ -67,45 +68,50 @@ class MainGame extends Component {
         window.addEventListener('keyup', this.handleKeys.bind(this, false))
         window.addEventListener('keydown', this.handleKeys.bind(this, true))
         window.addEventListener('resize', this.handleResize.bind(this, false))
-        const context = this.refs.canvas.getContext('2d')
-        this.setState({context: context})
-        this.startGame()
-        requestAnimationFrame(() => this.update)
+        
+        const context = this.refs.canvas.getContext('2d');
+        this.setState({context: context});
+        
+        this.startGame();
+        requestAnimationFrame(() => {this.update()});
     }
     
     componentWillUnmount() {
-        window.removeEventListener('resize', this.handleKeys)
-        window.removeEventListener('resize', this.handleKeys)
-        window.removeEventListener('resize', this.handleResize)
+        window.removeEventListener('resize', this.handleKeys);
+        window.removeEventListener('resize', this.handleKeys);
+        window.removeEventListener('resize', this.handleResize);
     }
     
     update() {
-        const context = this.state.context
-        const keys = this.state.keys
-        const ship = this.ship[0]
-        context.save()
-        context.scale(this.state.screen.ratio, this.state.screen.ratio)
+        const context = this.state.context;
+        const keys = this.state.keys;
+        const ship = this.ship[0];
+        
+        context.save();
+        context.scale(this.state.screen.ratio, this.state.screen.ratio);
+        
         context.fillStyle = '#000';
         context.globalAlpha = 0.4;
         context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
         context.globalAlpha = 1;
         
-        if(this.enemies.length < 1){
+        if(!this.enemies.length){
             let count = this.state.enemyCount + 1;
-            this.setState({enemyCount: count})
-            this.sendEnemies(count)
+            this.setState({enemyCount: count});
+            this.sendEnemies(count);
         }
         
-        this.collisionCheckWith(this.ship, this.enemies)
-        this.collisionCheckWith(this.bullets, this.enemies)
+        this.collisionCheckWith(this.ship, this.enemies);
+        this.collisionCheckWith(this.bullets, this.enemies);
         
-        this.updateObjects(this.ship, 'ship')
-        this.updateObjects(this.bullets, 'bullets')
-        this.updateObjects(this.enemies, 'enemies')
+        this.updateObjects(this.particles, 'particles');
+        this.updateObjects(this.ship, 'ship');
+        this.updateObjects(this.bullets, 'bullets');
+        this.updateObjects(this.enemies, 'enemies');
         
-        context.restore()
+        context.restore();
         
-        requestAnimationFrame(() => {this.update()})
+        requestAnimationFrame(() => {this.update()});
     }
     
     addScoreAndCoins(points, coins){
@@ -113,7 +119,7 @@ class MainGame extends Component {
             this.setState({
                 currentScore: this.state.currentScore + points,
                 coinsEarned: this.state.coinsEarned + coins
-            })
+            });
         }
     }
     
@@ -122,7 +128,7 @@ class MainGame extends Component {
             inGame: true,
             currentScore: 0,
             coinsEarned: 0
-        })
+        });
         
         let ship = new Ship({
             position: {
@@ -132,10 +138,10 @@ class MainGame extends Component {
             create: this.createObject.bind(this),
             onDead: this.endGame.bind(this)
         })
-        this.createObject(ship, 'ship')
+        this.createObject(ship, 'ship');
         
-        this.enemies = []
-        this.sendEnemies(this.state.enemyCount)
+        this.enemies = [];
+        this.sendEnemies(this.state.enemyCount);
     }
     
     endGame() {
@@ -143,45 +149,49 @@ class MainGame extends Component {
             inGame: false,
 //            topScore: ,
             totalCoins: this.state.totalCoins + this.state.coinsEarned
-        })
+        });
     }
     
-    sendEnemies(number){
-        let enemies = []
-        let ship = this.ship[0]
-        for(var i = 0; i < number; i++){
-            let enemy = new Enemy({
+    sendEnemies(num){
+        let enemies = [];
+        let ship = this.ship[0];
+        for(var i = 0; i < num; i++){
+            var enemy = new Enemy({
                 position: {
                     x: randomNumBetweenExcluding(0, this.state.screen.width, ship.position.x - 60, ship.position.x + 60),
                     y: randomNumBetweenExcluding(0, this.state.screen.height, ship.position.y - 60, ship.position.y + 60)
                 },
+                size: 80,
                 create: this.createObject.bind(this),
                 addScoreAndCoins: this.addScoreAndCoins.bind(this),
-                type: function(){
-                    var min = 0;
-                    var max = 10;
-                    var chance = Math.floor(Math.random() * (max - min)) + min;
-                    if(this.state.currentScore >= 500 && chance <= 2){
-                        return 'Queen'
-                    }
-                    if(this.state.currentScore >= 350 && chance <= 3){
-                        return 'Knight'
-                    }
-                    if(this.state.currentScore >= 200 && chance <= 4){
-                        return 'Bishop'
-                    }
-                    if(this.state.currentScore >= 50 && chance <= 5){
-                        return 'Rook'
-                    }
-                    return 'Pawn'
-                }
+                type: this.setType.bind(this)
             })
-            this.createObject(enemy, 'enemies')
+            this.createObject(enemy, 'enemies');
         }
     }
     
+    setType(){
+        var min = 0;
+        var max = 10;
+        var chance = Math.floor(Math.random() * (max - min)) + min;
+        if(this.state.currentScore >= 500 && chance <= 2){
+            return 'Queen'
+        }
+        if(this.state.currentScore >= 350 && chance <= 3){
+            return 'Knight'
+        }
+        if(this.state.currentScore >= 200 && chance <= 4){
+            return 'Bishop'
+        }
+        if(this.state.currentScore >= 50 && chance <= 5){
+            return 'Rook'
+        }
+        return 'Pawn'
+    }
+    
     createObject(object, type){
-        this[type].push(object)
+        this[type].push(object);
+        console.log(object);
     }
     
     updateObjects(objects, type){
@@ -215,6 +225,7 @@ class MainGame extends Component {
                     if(ships){
                         obj1.destroy()
                     } else if(bullets){
+                        obj1.destroy()
                         obj2.destroy()
                     }
                 }
@@ -237,16 +248,16 @@ class MainGame extends Component {
     render(){
         let gameover;
         let scoremessage;
-        let coinsmessage = `Coins Earned: ${this.state.coinsEarned}`
+        let coinsmessage = `Coins Earned: ${this.state.coinsEarned}`;
         if(this.state.currentScore > this.state.topScore){
-            scoremessage = `New High Score: ${this.state.currentScore}`
+            scoremessage = `New High Score: ${this.state.currentScore}`;
         } else{
-            scoremessage = `Score: ${this.state.currentScore}`
+            scoremessage = `Score: ${this.state.currentScore}`;
         }
         
         if(!this.state.inGame){
             gameover = (
-                <div>
+                <div className="endgame">
                     <p>Game Over!</p>
                     <p>{scoremessage}</p>
                     <p>{coinsmessage}</p>
@@ -254,15 +265,15 @@ class MainGame extends Component {
                         Retry?
                     </button>
                 </div>
-            )
-        }
+            );
+        };
         
         
         return (
             <div>
                 {gameover}
-                <div className="score current-score">Score: {this.state.currentScore}</div>
-                <div className="score top-score">Coins Earned: {this.state.coinsEarned}</div>
+                <span className="score current-score">Score: {this.state.currentScore}</span>
+                <span className="score top-score">Coins Earned: {this.state.coinsEarned}</span>
                 <canvas ref="canvas" width={this.state.screen.width * this.state.screen.ratio} height={this.state.screen.height * this.state.screen.ratio} />
             </div>
         );

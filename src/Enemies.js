@@ -1,3 +1,4 @@
+import Particle from './Particles';
 import {enemyVertices, randomNumBetween} from './helperFunctions';
 
 class Enemy {
@@ -10,12 +11,10 @@ class Enemy {
         }
         this.rotation = 0
         this.rotationSpeed = randomNumBetween(-1, 1)
-        this.radius = args.size
-        this.score = (this.radius/10) * 5
-        this.coins = (this.radius/10) * 100
+//        this.radius = this.setRadius()
         this.create = args.create
         this.addScoreAndCoins = args.addScoreAndCoins
-        this.size = function(){
+        this.setRadius = function(){
             if(args.type === "Queen"){
                 return 80
             }
@@ -32,35 +31,32 @@ class Enemy {
                 return 10
             }
         }
+        this.radius = args.size 
         this.vertices = enemyVertices(8, args.size)
+        this.score = (this.radius/10)*5;
+        this.coins = (this.radius/10) * 100;
+        console.log(`this.score: ${this.score}, this.coins: ${this.coins}`)
         }
     
     destroy(){
-        this.delete = true;
+        
         this.addScoreAndCoins(this.score, this.coins)
         
-        if(this.type !== "Pawn"){
+        
+        this.delete = true;
+        
+//        if(this.type !== "Pawn"){
             let enemy = new Enemy({
-                type: function(){
-                    if(this.type === "Queen"){
-                        return "Knight"
-                    }
-                    if(this.type === "Knight"){
-                        return "Bishop"
-                    }
-                    if(this.type === "Bishop"){
-                        return "Rook"
-                    }
-                    if(this.type === "Rook"){
-                        return "Pawn"
-                    }
-                },
                 position: this.position,
+                size: this.radius - 20,
                 create: this.create.bind(this),
-                addScoreAndCoins: this.addScoreAndCoins.bind(this)
+                addScoreAndCoins: this.addScoreAndCoins.bind(this),
+                type: this.type.bind(this)
             })
-            this.create(enemy, 'enemy')
-        }
+            this.create(enemy, 'enemies');
+        
+//        }
+        
     }
     render(state){
         this.position.x += this.speed.x;
@@ -88,19 +84,21 @@ class Enemy {
         }
         
         const context = state.context;
-        context.save();
-        context.translate(this.position.x, this.position.y)
-        context.rotate(this.rotation * Math.PI/180)
-        context.strokeStyle = '#FFFFFF'
-        context.lineWidth = 2
-        context.beginPath()
-        context.moveTo(0, -this.radius)
-        for(var i = 1; i < this.vertices.length; i++){
-            context.lineTo(this.vertices[i].x, this.vertices[i].y)
-        }
-        context.closePath()
-        context.stroke()
-        context.restore()
+        
+        
+            context.save();
+            context.translate(this.position.x, this.position.y);
+            context.rotate(this.rotation * Math.PI/180);
+            context.strokeStyle = '#FFFFFF';
+            context.lineWidth = 2;
+            context.beginPath();
+            context.moveTo(0, -this.radius);
+            for(var i = 1; i < this.vertices.length; i++){
+                context.lineTo(this.vertices[i].x, this.vertices[i].y)
+            };
+            context.closePath();
+            context.stroke();
+            context.restore();
     }
 }
 

@@ -2,13 +2,28 @@
   "name": "replacement-project",
   "version": "0.1.0",
   "private": true,
+  "keywords": [
+    "react",
+    "reactjs",
+    "boilerplate",
+    "hot",
+    "reload",
+    "hmr",
+    "live",
+    "edit",
+    "webpack",
+    "babel",
+    "react-transform"
+  ],
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-router-dom": "^4.1.1"
+    "react-router-dom": "^4.1.1",
+    "webpack-hot-middleware": "^2.18.0"
   },
   "devDependencies": {
     "babel-plugin-react-transform": "^2.0.2",
+    "babel-preset-stage-0": "^6.24.1",
     "react-redux": "^5.0.5",
     "react-scripts": "1.0.7",
     "react-transform-catch-errors": "^1.0.2",

@@ -1,4 +1,5 @@
 import Bullet from './Bullets';
+import Particle from './Particles';
 import {rotatePoint, randomNumBetween} from './helperFunctions';
 
 class Ship {

@@ -1,3 +1,10 @@
+/**
+ * Generates vertices for asteroid polygon with certain count and radius
+ * @param  {Number} count   Number of vertices
+ * @param  {Number} rad     Maximal radius of polygon
+ * @return {Array}        Array of vertices: {x: Number, y: Number}
+ */
+
 export function enemyVertices(count, rad){
     let p = []
     for(let i = 0; i < count; i++){
