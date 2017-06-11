@@ -16,6 +16,9 @@
     "react-transform"
   ],
   "dependencies": {
+    "body-parser": "^1.17.2",
+    "express-session": "^1.15.3",
+    "massive": "^2.6.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-router-dom": "^4.1.1",
