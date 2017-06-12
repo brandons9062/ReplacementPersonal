@@ -17,6 +17,7 @@
 .env.production.local
 /server/servConfig.js
 /server/db
+/src/Auth/authVariables.js
 
 npm-debug.log*
 yarn-debug.log*

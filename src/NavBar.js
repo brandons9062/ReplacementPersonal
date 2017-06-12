@@ -1,9 +1,43 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import './index.css';
+import Auth from './Auth/Auth';
 
 class NavBar extends Component {
+    goTo(route){
+        this.props.history.replace(`/${route}`)
+    }
+    
+    login(){
+        this.props.auth.login()
+    }
+    
+    logout(){
+        this.props.auth.logout()
+    }   
+    
     render(){
+        const {isAuthenticated} = this.props.auth
+        
+        
+        const guestLinks = (
+            <li>
+                <button onClick={this.login.bind(this)}>
+                    <h4>Login</h4>
+                </button>
+            </li>
+        );
+        
+        const userLinks = (
+            <li>
+                <button onClick={this.logout.bind(this)}>
+                    <h4>Logout</h4>
+                </button>
+            </li>
+        );
+        
         return (
             <nav id="myNav" className="navbar navbar-inverse myNav sticky-top">
                 <div className="container-fluid">
@@ -34,6 +68,7 @@ class NavBar extends Component {
                                     <h4>Your Stats</h4>
                                 </Link>
                             </li>
+                            {isAuthenticated ? userLinks : guestLinks}
                         </ul>
                     </div>
                 </div>
@@ -41,5 +76,8 @@ class NavBar extends Component {
         );
     }
 }
+
+
+
 
 export default NavBar;

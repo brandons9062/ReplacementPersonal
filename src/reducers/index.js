@@ -1,7 +1,9 @@
 import {combineReducers} from 'redux';
+import {auth, handleAuthentication} from '../index';
 
 const rootReducer = combineReducers({
-    state: (state = {}) => state
+    auth: auth,
+    handleAuthentication: handleAuthentication
 })
 
 export default rootReducer;
