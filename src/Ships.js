@@ -80,22 +80,34 @@ class Ship {
         }
         
         const context = state.context
+        
+        var img = new Image();
+        img.src = 'https://cynet-web.com/wp-content/uploads/2015/05/SEO-SPACESHIP-ICON-CYNET-white-250px.png'
+        var aspect = img.height/img.width;
+        img.style.height = this.radius/2;
+        img.style.width = img.height/aspect;
+        
         context.save()
         context.translate(this.position.x, this.position.y)
         context.rotate(this.rotation * Math.PI/180)
         context.strokeStyle = '#FFFFFF'
-        context.fillStyle = '#000000'
+//        context.fillStyle = '#FFFFFF'
         context.lineWidth = 2
         context.beginPath()
-        context.moveTo(0, -15)
+        context.moveTo(0, -15) 
         context.lineTo(10, 10)
         context.lineTo(5, 7)
         context.lineTo(-5, 7)
-        context.lineTo(-10, -10)
+        context.lineTo(-10, 10)
         context.closePath()
-        context.fill()
+//        context.fill()
         context.stroke()
+        context.clip();
+        context.translate(-this.radius/aspect, -this.radius);
+        context.drawImage(img, 0, 0, this.radius/aspect * 2, this.radius * 2);
+        context.translate(this.radius/aspect,  this.radius);
         context.restore()
+        
     }
 }
 

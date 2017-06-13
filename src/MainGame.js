@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import Ship from './Ships';
 import Enemy from './Enemies';
 import {randomNumBetweenExcluding} from './helperFunctions';
+import {addUserPointsAndCoins} from './actions';
 
 
 const KEY = {
@@ -13,8 +15,9 @@ const KEY = {
 }
 
 class MainGame extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        console.log(props);
+        super(props);
         this.state = {
             screen: {
                 width: window.innerWidth,
@@ -31,10 +34,10 @@ class MainGame extends Component {
             },
             enemyCount: 3,
             currentScore: 0,
-//            topScore:,
+            topScore: 0,
             inGame: false,
             coinsEarned: 0,
-//            totalCoins:
+            totalCoins: 0
         }
         this.ship = [];
         this.enemies = [];
@@ -59,7 +62,7 @@ class MainGame extends Component {
             screen: {
                 width: window.innerWidth,
                 height: window.innerHeight,
-                ration: window.devicePixelRation || 1,
+                ratio: window.devicePixelRatio || 1,
             }
         })
     }
@@ -71,9 +74,9 @@ class MainGame extends Component {
         
         const context = this.refs.canvas.getContext('2d');
         this.setState({context: context});
+        console.log(this.props.users);
         
         this.startGame();
-        console.log(this.enemies)
         requestAnimationFrame(() => {this.update()});
     }
     
@@ -95,15 +98,14 @@ class MainGame extends Component {
         context.globalAlpha = 0.4;
         context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
         context.globalAlpha = 1;
-//        
+       
         this.updateObjects(this.particles, 'particles');
         this.updateObjects(this.ship, 'ship');
         this.updateObjects(this.bullets, 'bullets');
         this.updateObjects(this.enemies, 'enemies');
-//                console.log("this.enemies.length:   ", this.enemies.length);
+
 
         if(this.enemies.length < 1){
-            console.log("HIT");
             let count = this.state.enemyCount + 1;
             this.setState({enemyCount: count});
             this.sendEnemies(count);
@@ -150,11 +152,16 @@ class MainGame extends Component {
     }
     
     endGame() {
+        if(this.state.currentScore > this.state.topScore){
+            this.setState({
+                topScore: this.state.currentScore
+            })
+        }
         this.setState({
             inGame: false,
-//            topScore: ,
-            totalCoins: this.state.totalCoins + this.state.coinsEarned
+            totalCoins: this.state.coinsEarned + this.state.totalCoins
         });
+//        this.props.addUserPointsAndCoins(this.props.users.id, this.state.topScore, this.state.totalCoins);
     }
     
     sendEnemies(num){
@@ -279,11 +286,16 @@ class MainGame extends Component {
             <div>
                 {gameover}
                 <span className="score current-score">Score: {this.state.currentScore}</span>
-                <span className="score top-score">Coins Earned: {this.state.coinsEarned}</span>
+                <span className="score top-score">Top Score: {this.state.topScore}</span>
+                <span className="score current-coins">Coins Earned: {this.state.coinsEarned}</span>
                 <canvas ref="canvas" width={this.state.screen.width * this.state.screen.ratio} height={this.state.screen.height * this.state.screen.ratio} />
             </div>
         );
     }
 }
+function mapStateToProps(state){
+    return {users: state.users};
+}
 
-export default MainGame;
+
+export default connect(mapStateToProps, {addUserPointsAndCoins})(MainGame);

@@ -86,6 +86,34 @@ app.get('/api/topScores', function(req, res){
     })
 })
 
+app.get('/api/users', function(req, res){
+    db.getUsers(function(err, users){
+        res.send(users)
+    })
+})
+
+app.get('/api/users/:id', function(req, res){
+    var userId = req.params.id;
+    db.getUserById([userId], function(err, users){
+        res.send(users)
+    })
+})
+
+app.get('/api/users/:username/:password', function(req, res){
+    var username = req.params.username;
+    var password = req.params.password;
+    db.loginUser([username, password], function(err, user){
+        res.send(user);
+    })
+})
+
+app.put('/api/usersupdate/:id', function(req, res){
+    var userId = req.params.id;
+    var update = req.body;
+    db.updateHighscoreAndTotalCoins([userId, update.highscore, update.totalcoins], function(err){
+        res.send("updated points and coins");
+    })
+})
 
 
 

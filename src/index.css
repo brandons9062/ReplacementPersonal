@@ -17,6 +17,11 @@ canvas {
 .current-score {
   left: 20px;
 }
+
+.current-coins {
+  right: 400px;
+}
+
 .top-score {
   right: 20px;
 }

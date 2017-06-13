@@ -1,40 +1,41 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import './index.css';
-import Auth from './Auth/Auth';
+//import Auth from './Auth/Auth';
+import {logoutUser} from './actions';
 
 class NavBar extends Component {
-    goTo(route){
-        this.props.history.replace(`/${route}`)
-    }
-    
-    login(){
-        this.props.auth.login()
-    }
-    
-    logout(){
-        this.props.auth.logout()
-    }   
+//    goTo(route){
+//        this.props.history.replace(`/${route}`)
+//    }
+//    
+//    login(){
+//        this.props.auth.login()
+//    }
+//    
+//    logout(){
+//        this.props.auth.logout()
+//    }   
     
     render(){
-        const {isAuthenticated} = this.props.auth
-        
-        
+//        const {isAuthenticated} = this.props.auth
+//        
+//        
         const guestLinks = (
             <li>
-                <button onClick={this.login.bind(this)}>
+                <Link to='/signin'>
                     <h4>Login</h4>
-                </button>
+                </Link>
             </li>
         );
-        
+//        
         const userLinks = (
             <li>
-                <button onClick={this.logout.bind(this)}>
+                <Link to='/' onClick={this.props.logoutUser}>
                     <h4>Logout</h4>
-                </button>
+                </Link>
             </li>
         );
         
@@ -68,7 +69,7 @@ class NavBar extends Component {
                                     <h4>Your Stats</h4>
                                 </Link>
                             </li>
-                            {isAuthenticated ? userLinks : guestLinks}
+                            {!this.props.users ? guestLinks : userLinks}
                         </ul>
                     </div>
                 </div>
@@ -78,6 +79,9 @@ class NavBar extends Component {
 }
 
 
+function mapStateToProps(state){
+    return {users: state.users};
+}
 
 
-export default NavBar;
+export default connect(mapStateToProps, {logoutUser})(NavBar);

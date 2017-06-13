@@ -85,19 +85,38 @@ class Enemy {
         
         const context = state.context;
         
-        
+        var img = new Image();
+//        img.onload = function() {
+//            context.drawImage(img, 0, 0);
+//        }
+        img.src = 'http://berlinfilmjournal.com/wp-content/uploads/2014/03/Nicholas-Cage-FaceOff-1997.jpg'
+        var aspect = img.height/img.width;
+        img.style.height = this.radius/2;
+        img.style.width = img.height/aspect;
+        var pat = context.createPattern(img, "no-repeat");
             context.save();
             context.translate(this.position.x, this.position.y);
             context.rotate(this.rotation * Math.PI/180);
             context.strokeStyle = '#FFFFFF';
+//            context.fillStyle = pat;
             context.lineWidth = 2;
+            
+//            context.globalCompositeOperation = "source-in";
             context.beginPath();
             context.moveTo(0, -this.radius);
             for(var i = 1; i < this.vertices.length; i++){
                 context.lineTo(this.vertices[i].x, this.vertices[i].y)
-            };
+            }; 
+            
+            
             context.closePath();
+            
+//            context.fill();
             context.stroke();
+            context.clip();
+            context.translate(-this.radius/aspect, -this.radius);
+            context.drawImage(img, 0, 0, this.radius/aspect * 2, this.radius * 2);
+            context.translate(this.radius/aspect,  this.radius);
             context.restore();
     }
 }
