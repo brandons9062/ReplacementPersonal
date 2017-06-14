@@ -6,10 +6,10 @@ export default class Auth {
   auth0 = new auth0.WebAuth({
     domain: AUTH_CONFIG.domain,
     clientID: AUTH_CONFIG.clientId,
-    redirectUri: AUTH_CONFIG.callbackUrl,
+    redirectUri: 'http://localhost:3000/',
     audience: `https://${AUTH_CONFIG.domain}/userinfo`,
     responseType: 'token id_token',
-    scope: 'openid'
+    scope: 'openid profile'
   });
 
   constructor() {
