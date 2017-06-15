@@ -12,7 +12,13 @@ export const ADD_POINTS_COINS = 'ADD_POINTS_COINS';
 const ROOT_URL = "http://localhost:8080/";
 
 export function authUser(){
-    const request = axios.get(`${ROOT_URL}auth`)
+    const request = axios.get(`${ROOT_URL}auth/me`)
+    
+    console.log(`My authUser returns: ${request.data}`)
+    return {
+        type: AUTH_USER,
+        payload: request
+    }
 }
 
 export function getUsers(){

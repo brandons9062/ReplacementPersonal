@@ -8,45 +8,27 @@ const cors = require('cors');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const servConfig = require('./servConfig');
+const authConfig = require('./authConfig');
 const config = require('../webpack.config.dev');
 
 const app = module.exports = express();
 const port = 8080;
 
+app.use(express.static('../src'));
+
 app.use(bodyParser.json());
 app.use(session({
     secret: servConfig.sessionSecret,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {secure: false, httpOnly: false}
 }));
 
-// Configure Passport to use Auth0
-var strategy = new Auth0Strategy({
-    domain:       process.env.AUTH0_DOMAIN,
-    clientID:     process.env.AUTH0_CLIENT_ID,
-    clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    callbackURL:  process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
-  }, function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
-  });
 
-passport.use(strategy);
-
-// This can be used to keep a smaller payload
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-app.use(express.static('../src'));
 app.use(passport.initialize())
 app.use(passport.session())
+
+app.use(express.static('../src'));
 
 var corsOptions = {
     origin: 'http://localhost:8080'
@@ -55,11 +37,12 @@ var corsOptions = {
 app.use(cors());
 
 app.use(function(req, res, next){
-    var allowedOrigins = ['http://localhost:3000']
-    var origin = req.headers.origin
-    if(allowedOrigins.indexOf(origin) > -1){
-        res.setHeader('Access-Control-Allow-Origin', origin)
-    }
+//    var allowedOrigins = ['http://localhost:3000']
+//    var origin = req.headers.origin
+//    if(allowedOrigins.indexOf(origin) > -1){
+//        res.setHeader('Access-Control-Allow-Origin', origin)
+//    }
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
     res.header('Access-Control-Allow-Methods', ['GET','PUT','POST','DELETE']);
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', true);
@@ -80,6 +63,88 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
+
+
+
+//-------Auth0 Calls--------------------------------------------
+
+
+
+passport.use('auth0', new Auth0Strategy({
+   domain:       authConfig.auth0.domain,
+   clientID:     authConfig.auth0.clientID,
+   clientSecret: authConfig.auth0.clientSecret,
+   callbackURL:  'http://localhost:8080/auth/callback',
+    passReqToCallback: true
+  },
+  function(accessToken, refreshToken, extraParams, profile, done) {
+    //Find user in database
+    db.getUserByAuthId([profile.id], function(err, user) {
+      user = user[0];
+      if (!user) { //if there isn't one, we'll create one!
+        console.log('CREATING USER');
+        db.createUserByAuth([profile.id], function(err, user) {
+          console.log('USER CREATED', user);
+          return done(err, user[0]); // GOES TO SERIALIZE USER
+        })
+      } else { //when we find the user, return it
+        console.log('FOUND USER', user);
+        return done(err, user);
+      }
+    })  
+  }
+));
+
+//THIS IS INVOKED ONE TIME TO SET THINGS UP
+passport.serializeUser(function(userA, done) {
+  
+  var userB = userA;
+    console.log('serializing', userB);
+  //Things you might do here :
+   //Serialize just the id, get other information to add to session, 
+  done(null, userB); //PUTS 'USER' ON THE SESSION
+});
+
+//USER COMES FROM SESSION - THIS IS INVOKED FOR EVERY ENDPOINT
+//var userC;
+passport.deserializeUser(function(userB, done) {
+    console.log('deserializing', userB)
+  var userC = userB;
+  //Things you might do here :
+    // Query the database with the user id, get other information to put on req.user
+  done(null, userC); //PUTS 'USER' ON REQ.USER
+});
+
+
+
+app.get('/auth', passport.authenticate('auth0'));
+
+
+//**************************//
+//To force specific provider://
+//**************************//
+// app.get('/login/google',
+//   passport.authenticate('auth0', {connection: 'google-oauth2'}), function (req, res) {
+//   res.redirect("/");
+// });
+
+app.get('/auth/callback',
+  passport.authenticate('auth0', {successRedirect: 'http://localhost:3000'}), function(req, res) {
+    console.log("HIT CALLBACK");
+    res.status(200).send(req.user);
+})
+
+app.get('/auth/me', function(req, res) {
+    console.log(req.user);
+  if (!req.user) return res.sendStatus(404);
+  //THIS IS WHATEVER VALUE WE GOT FROM userC variable above.
+  res.status(200).send(req.user);
+})
+
+app.get('/auth/logout', function(req, res) {
+  req.logout();
+  res.redirect('http://localhost:3000');
+})
 
 
 

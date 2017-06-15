@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import Ship from './Ships';
 import Enemy from './Enemies';
 import {randomNumBetweenExcluding} from './helperFunctions';
-import {addUserPointsAndCoins} from './actions';
+import {addUserPointsAndCoins, authUser} from './actions';
 
 
 const KEY = {
@@ -15,9 +15,8 @@ const KEY = {
 }
 
 class MainGame extends Component {
-    constructor(props){
-        console.log(props);
-        super(props);
+    constructor(){
+        super();
         this.state = {
             screen: {
                 width: window.innerWidth,
@@ -74,9 +73,19 @@ class MainGame extends Component {
         
         const context = this.refs.canvas.getContext('2d');
         this.setState({context: context});
-        console.log(this.props.users);
+//        console.log(this.props.users);
         
         this.startGame();
+        this.props.authUser();
+//        console.log(this.props)
+        
+        if(this.props.users){
+            this.setState({
+                topScore: this.props.users.highscore,
+                totalCoins: this.props.users.totalcoins
+            })
+        }
+        
         requestAnimationFrame(() => {this.update()});
     }
     
@@ -298,4 +307,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, {addUserPointsAndCoins})(MainGame);
+export default connect(mapStateToProps, {addUserPointsAndCoins, authUser})(MainGame);

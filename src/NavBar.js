@@ -3,8 +3,8 @@ import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 //import PropTypes from 'prop-types';
 import './index.css';
-import Auth from './Auth/Auth';
-import {logoutUser} from './actions';
+//import Auth from './Auth/Auth';
+//import {logoutUser} from './actions';
 
 class NavBar extends Component {
 //    goTo(route){
@@ -12,33 +12,33 @@ class NavBar extends Component {
 //    }
 //    
     
-    
-    login(){
-        console.log(this.props.auth)
-        this.props.auth.login()
-    }
-    
-    logout(){
-        this.props.auth.logout()
-    }   
+//    
+//    login(){
+//        console.log(this.props.auth)
+//        this.props.auth.login()
+//    }
+//    
+//    logout(){
+//        this.props.auth.logout()
+//    }   
     
     render(){
-        const {isAuthenticated} = this.props.auth
+//        const {isAuthenticated} = this.props.auth
 //        
 //        
         const guestLinks = (
             <li>
-                <button onClick={this.login.bind(this)}>
+                <Link to='http://localhost:8080/auth'>
                     <h4>Login</h4>
-                </button>
+                </Link>
             </li>
         );
 //        
         const userLinks = (
             <li>
-                <button onClick={this.logout.bind(this)}>
+                <Link to='http://localhost:8080/auth/logout'>
                     <h4>Logout</h4>
-                </button>
+                </Link>
             </li>
         );
         
@@ -72,7 +72,16 @@ class NavBar extends Component {
                                     <h4>Your Stats</h4>
                                 </Link>
                             </li>
-                            {isAuthenticated() ? userLinks : guestLinks}
+                            <li>
+                                <a href='http://localhost:8080/auth'>
+                                    <h4>Login</h4>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='http://localhost:8080/auth/logout'>
+                                    <h4>Logout</h4>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
