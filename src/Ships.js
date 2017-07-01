@@ -90,19 +90,19 @@ class Ship {
         context.save()
         context.translate(this.position.x, this.position.y)
         context.rotate(this.rotation * Math.PI/180)
-        context.strokeStyle = '#FFFFFF'
-//        context.fillStyle = '#FFFFFF'
-        context.lineWidth = 2
-        context.beginPath()
-        context.moveTo(0, -15) 
-        context.lineTo(10, 10)
-        context.lineTo(5, 7)
-        context.lineTo(-5, 7)
-        context.lineTo(-10, 10)
-        context.closePath()
-//        context.fill()
-        context.stroke()
-        context.clip();
+//        context.strokeStyle = '#FFFFFF'
+////        context.fillStyle = '#FFFFFF'
+//        context.lineWidth = 2
+//        context.beginPath()
+//        context.moveTo(0, -15) 
+//        context.lineTo(10, 10)
+//        context.lineTo(5, 7)
+//        context.lineTo(-5, 7)
+//        context.lineTo(-10, 10)
+//        context.closePath()
+////        context.fill()
+//        context.stroke()
+//        context.clip();
         context.translate(-this.radius/aspect, -this.radius);
         context.drawImage(img, 0, 0, this.radius/aspect * 2, this.radius * 2);
         context.translate(this.radius/aspect,  this.radius);

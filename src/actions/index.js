@@ -14,7 +14,7 @@ const ROOT_URL = "http://localhost:8080/";
 export function authUser(){
     const request = axios.get(`${ROOT_URL}auth/me`)
     
-    console.log(`My authUser returns: ${request.data}`)
+    
     return {
         type: AUTH_USER,
         payload: request
@@ -32,6 +32,7 @@ export function getUsers(){
 
 export function getUser(id){
     const request = axios.get(`${ROOT_URL}api/users/${id}`)
+    console.log(request)
     
     return {
         type: GET_USER,
@@ -59,9 +60,12 @@ export function logoutUser(){
 
 export function addUserPointsAndCoins(id, highscore, totalcoins){
     let data = {
-        "highscore": highscore,
-        "totalcoins": totalcoins
+        highscore: highscore,
+        totalcoins: totalcoins
     }
+    
+    console.log(data)
+    
     const request = axios.put(`${ROOT_URL}api/userupdate/${id}`, data)
     
     return {

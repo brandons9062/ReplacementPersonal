@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 //import PropTypes from 'prop-types';
 import './index.css';
 //import Auth from './Auth/Auth';
-//import {logoutUser} from './actions';
+import {logoutUser} from './actions';
 
 class NavBar extends Component {
 //    goTo(route){
@@ -28,17 +28,17 @@ class NavBar extends Component {
 //        
         const guestLinks = (
             <li>
-                <Link to='http://localhost:8080/auth'>
+                <a href='http://localhost:8080/auth'>
                     <h4>Login</h4>
-                </Link>
+                </a>
             </li>
         );
 //        
         const userLinks = (
             <li>
-                <Link to='http://localhost:8080/auth/logout'>
+                <a onClick={this.props.logoutUser} href='http://localhost:8080/auth/logout'>
                     <h4>Logout</h4>
-                </Link>
+                </a>
             </li>
         );
         
@@ -72,16 +72,7 @@ class NavBar extends Component {
                                     <h4>Your Stats</h4>
                                 </Link>
                             </li>
-                            <li>
-                                <a href='http://localhost:8080/auth'>
-                                    <h4>Login</h4>
-                                </a>
-                            </li>
-                            <li>
-                                <a href='http://localhost:8080/auth/logout'>
-                                    <h4>Logout</h4>
-                                </a>
-                            </li>
+                            {this.props.users.id ? userLinks : guestLinks}
                         </ul>
                     </div>
                 </div>
@@ -91,9 +82,9 @@ class NavBar extends Component {
 }
 //
 //
-//function mapStateToProps(state){
-//    return {users: state.users};
-//}
+function mapStateToProps(state){
+    return {users: state.users};
+}
 
 
-export default NavBar;
+export default connect(mapStateToProps, {logoutUser})(NavBar);

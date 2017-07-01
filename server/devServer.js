@@ -28,7 +28,7 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.use(express.static('../src'));
+app.use(express.static('../build'));
 
 var corsOptions = {
     origin: 'http://localhost:8080'
@@ -129,21 +129,23 @@ app.get('/auth', passport.authenticate('auth0'));
 // });
 
 app.get('/auth/callback',
-  passport.authenticate('auth0', {successRedirect: 'http://localhost:3000'}), function(req, res) {
+  passport.authenticate('auth0', {successRedirect: '/'}), function(req, res) {
     console.log("HIT CALLBACK");
     res.status(200).send(req.user);
 })
 
 app.get('/auth/me', function(req, res) {
-    console.log(req.user);
+//    console.log(req.user);
   if (!req.user) return res.sendStatus(404);
-  //THIS IS WHATEVER VALUE WE GOT FROM userC variable above.
-  res.status(200).send(req.user);
+  //THIS IS WHATEVER VALUE WE GOT FROM userC variable above. 
+    
+    return res.status(200).send(req.user);
+  
 })
 
 app.get('/auth/logout', function(req, res) {
   req.logout();
-  res.redirect('http://localhost:3000');
+  res.redirect('/');
 })
 
 
@@ -152,9 +154,9 @@ app.get('/auth/logout', function(req, res) {
 
 
 
-//app.get('*', function(req, res) {
-//  res.sendFile(path.join(__dirname, '../public/index.html'))
-//})
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, '../public/index.html'))
+})
 
 
 
@@ -185,6 +187,7 @@ app.get('/api/users', function(req, res){
 app.get('/api/users/:id', function(req, res){
     var userId = req.params.id;
     db.getUserById([userId], function(err, users){
+//        console.log(`GOT USER: ${users}`)
         res.send(users)
     })
 })
@@ -197,10 +200,11 @@ app.get('/api/users/:username/:password', function(req, res){
     })
 })
 
-app.put('/api/usersupdate/:id', function(req, res){
+app.put('/api/userupdate/:id', function(req, res){
     var userId = req.params.id;
-    var update = req.body;
-    db.updateHighscoreAndTotalCoins([userId, update.highscore, update.totalcoins], function(err){
+    var newData = req.body;
+//    console.log(newData);
+    db.updateHighscoreAndTotalCoins([userId, newData.highscore, newData.totalcoins], function(err){
         res.send("updated points and coins");
     })
 })
@@ -208,5 +212,5 @@ app.put('/api/usersupdate/:id', function(req, res){
 
 
 app.listen(port, function() {
-  console.log(`Listening on port ${port}`);
+//  console.log(`Listening on port ${port}`);
 });

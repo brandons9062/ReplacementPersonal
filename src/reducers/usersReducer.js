@@ -6,6 +6,7 @@ export default function(state = {}, action){
         case GET_USERS:
             return _.mapKeys(action.payload.data, 'id')
         case GET_USER:
+            console.log(action.payload.data)
             return _.mapKeys(action.payload.data, 'id')
 //        case LOGIN_USER:
 //            return _.mapKeys(action.payload.data, 'id')
@@ -14,9 +15,10 @@ export default function(state = {}, action){
         case AUTH_USER:
             if(action.payload.data){
                 return action.payload.data
-            }else{
-                return state;
+            } else{
+                return state
             }
+            
         default:
             return state;
     }

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import Ship from './Ships';
 import Enemy from './Enemies';
 import {randomNumBetweenExcluding} from './helperFunctions';
-import {addUserPointsAndCoins, authUser} from './actions';
+import {addUserPointsAndCoins, authUser, getUser} from './actions';
 
 
 const KEY = {
@@ -66,6 +66,7 @@ class MainGame extends Component {
         })
     }
     
+    
     componentDidMount() {
         window.addEventListener('keyup', this.handleKeys.bind(this, false))
         window.addEventListener('keydown', this.handleKeys.bind(this, true))
@@ -75,16 +76,9 @@ class MainGame extends Component {
         this.setState({context: context});
 //        console.log(this.props.users);
         
-        this.startGame();
-        this.props.authUser();
-//        console.log(this.props)
         
-        if(this.props.users){
-            this.setState({
-                topScore: this.props.users.highscore,
-                totalCoins: this.props.users.totalcoins
-            })
-        }
+        this.startGame();
+        
         
         requestAnimationFrame(() => {this.update()});
     }
@@ -123,6 +117,12 @@ class MainGame extends Component {
         this.collisionCheckWith(this.ship, this.enemies);
         this.collisionCheckWith(this.bullets, this.enemies);
         
+        if(this.props.users.id){
+            this.setState({
+                topScore: this.props.users.highscore,
+                totalCoins: this.props.users.totalcoins
+            })
+        }
 
         
         context.restore();
@@ -140,6 +140,15 @@ class MainGame extends Component {
     }
     
     startGame() {
+        console.log(`this.props.users.id: ${this.props.users.id}`)
+//        if(!this.props.users.id){
+           this.props.authUser();
+            
+//        }else{
+//            this.props.getUser(this.props.users.id)
+//            
+//            
+//        }
         this.setState({
             inGame: true,
             currentScore: 0,
@@ -160,17 +169,26 @@ class MainGame extends Component {
         this.sendEnemies(this.state.enemyCount);
     }
     
+
     endGame() {
         if(this.state.currentScore > this.state.topScore){
             this.setState({
                 topScore: this.state.currentScore
             })
         }
+        var newCoins = this.state.coinsEarned + this.state.totalCoins;
+        
+        console.log(`NEW TOTAL COINS: ${newCoins}`)
+        
         this.setState({
             inGame: false,
-            totalCoins: this.state.coinsEarned + this.state.totalCoins
+            totalCoins: newCoins
         });
-//        this.props.addUserPointsAndCoins(this.props.users.id, this.state.topScore, this.state.totalCoins);
+//        console.log(`this.state.totalcoins: ${this.state.totalCoins}`)
+//        console.log(`this.state.topScore: ${this.state.topScore}`)
+        console.log(this.props.users)
+        
+        this.props.addUserPointsAndCoins(this.props.users.id, this.state.topScore, newCoins);
     }
     
     sendEnemies(num){
@@ -212,14 +230,13 @@ class MainGame extends Component {
     
     createObject(object, type){
         this[type].push(object);
-        console.log(object);
     }
     
     updateObjects(objects, type){
         let index = 0
         for(var obj of objects){
             if(obj.delete){
-                console.log(this[type])
+                
                 this[type].splice(index, 1)
             } else {
                 objects[index].render(this.state)
@@ -307,4 +324,4 @@ function mapStateToProps(state){
 }
 
 
-export default connect(mapStateToProps, {addUserPointsAndCoins, authUser})(MainGame);
+export default connect(mapStateToProps, {addUserPointsAndCoins, authUser, getUser})(MainGame);
