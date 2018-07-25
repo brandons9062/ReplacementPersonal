@@ -13,7 +13,7 @@ class Ship {
         this.rotationSpeed = 6
         this.speed = 0.15
         this.inertia = 0.99
-        this.radius = 20
+        this.radius = 30
         this.lastShot = 0
         this.create = args.create
         this.onDead = args.onDead
@@ -82,6 +82,7 @@ class Ship {
         const context = state.context
         
         var img = new Image();
+//        img.src = 'https://cynet-web.com/wp-content/uploads/2015/05/SEO-SPACESHIP-ICON-CYNET-white-250px.png'
         img.src = 'https://cynet-web.com/wp-content/uploads/2015/05/SEO-SPACESHIP-ICON-CYNET-white-250px.png'
         var aspect = img.height/img.width;
         img.style.height = this.radius/2;

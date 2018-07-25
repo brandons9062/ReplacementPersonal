@@ -97,9 +97,14 @@ class MainGame extends Component {
         context.save();
         context.scale(this.state.screen.ratio, this.state.screen.ratio);
         
-        context.fillStyle = '#000';
+        var backgroundImg = new Image();
+        backgroundImg.src = 'http://getwallpapers.com/wallpaper/full/b/f/9/16392.jpg';
+
+
+        //context.fillStyle = '#000';
         context.globalAlpha = 0.4;
-        context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
+        //context.fillRect(0, 0, this.state.screen.width, this.state.screen.height);
+        context.drawImage(backgroundImg, 0, 0, this.state.screen.width, this.state.screen.height);
         context.globalAlpha = 1;
        
         this.updateObjects(this.particles, 'particles');
